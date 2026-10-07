@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cult Design Review</title>
+  <meta name="description" content="Internal footwear design review: concepts, votes, benchmarks and final selections.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23141414'/%3E%3Cpath d='M7 20c0-3 3-4 6-4.5l6-1.5c2-1.5 3.5-3 5.5-3 1.5 0 2 1 2.3 2.5L27 18c0 1.5-.5 3-2 3H8.5C7.5 21 7 20.7 7 20z' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <a class="skip-link" href="#app">Skip to content</a>
+  <div class="proto-banner" role="note">
+    <strong>Prototype</strong> · Pick who you are from “Viewing as” — no real sign-in · Data is saved only in this browser
+  </div>
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a class="brand" href="#/" aria-label="Cult Design Review — dashboard">
+        <span class="brand__mark">cult</span><span class="brand__sub">Design Review</span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <a href="#/" data-nav="dashboard">Dashboard</a>
+        <a href="#/reviews" data-nav="reviews">Reviews</a>
+        <a href="#/finals" data-nav="finals">Selections</a>
+        <a href="#/benchmarks" data-nav="benchmarks">Benchmarks</a>
+        <a href="#/colours" data-nav="colours">Pantone &amp; WGSN</a>
+        <a href="#/guide" data-nav="guide">How it works</a>
+        <a href="#/settings" data-nav="settings">Settings</a>
+      </nav>
+      <div id="user-slot" class="topbar__user"></div>
+    </div>
+  </header>
+
+  <main id="app" class="page" tabindex="-1"><p class="loading" role="status">Loading Cult Design Review...</p></main>
+
+  <dialog id="modal" class="modal" aria-labelledby="modal-title"></dialog>
+  <dialog id="confirm" class="modal modal--confirm" aria-labelledby="confirm-msg"></dialog>
+  <div id="toasts" class="toasts" aria-live="polite" aria-atomic="false"></div>
+
+  <noscript><p class="page">This prototype needs JavaScript enabled.</p></noscript>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/util.js"></script>
+  <script src="js/images.js"></script>
+  <script src="js/backend.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/seed.js"></script>
+  <script src="js/permissions.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/views/lists.js"></script>
+  <script src="js/views/review.js"></script>
+  <script src="js/views/editor.js"></script>
+  <script src="js/views/library.js"></script>
+  <script src="js/views/benchmarks.js"></script>
+  <script src="js/views/guide.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
