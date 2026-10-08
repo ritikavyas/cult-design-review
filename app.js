@@ -525,27 +525,51 @@
     const esc = CR.util.esc;
     const mode = (gate && gate.mode) || 'unavailable';
     if (mode === 'signin') {
+      const expired = /otp_expired|access_denied/.test(location.hash);
       $app().innerHTML = `<section class="welcome gate" style="margin-top:40px"><p class="eyebrow">Cult footwear</p><h2>Sign in to Cult Design Review</h2>
-        <p class="lede">Enter your email. We’ll send you a link — click it and you’re in. No password needed.</p>
+        <p class="lede">Enter your email. We’ll email you a 6-digit code — type it here and you’re in. No password needed.</p>
+        ${expired ? '<p class="notice notice--draft">That sign-in link was already used or has expired (work email often opens links automatically). Request a code below and type it in instead — don’t click any link in the email.</p>' : ''}
         ${gate.google ? '<button class="btn btn--block" id="google-btn" type="button">Continue with Google</button><p class="small muted" style="margin:10px 0">or use your email</p>' : ''}
-        <form id="signin-form" class="gate__form"><label class="field"><span class="field__label">Work email</span>
-          <input type="email" id="signin-email" name="email" required autocomplete="email" placeholder="you@curefit.com"></label>
-          <button class="btn btn--primary" id="signin-btn">Email me a sign-in link</button></form>
+        <form id="signin-form" class="gate__form"><label class="field"><span class="field__label">Your email</span>
+          <input type="email" id="signin-email" name="email" required autocomplete="email" placeholder="you@company.com"></label>
+          <button class="btn btn--primary" id="signin-btn">Email me a code</button></form>
+        <form id="code-form" class="gate__form" hidden><label class="field"><span class="field__label">6-digit code from the email</span>
+          <input id="code-input" name="code" required inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="123456"></label>
+          <button class="btn btn--primary" id="code-btn">Sign in</button>
+          <button class="btn btn--ghost" type="button" id="code-back">Use a different email</button></form>
         <p class="form-error" id="signin-msg" role="status"></p></section>`;
+      const msg = document.getElementById('signin-msg');
+      const say = (text, ok) => { msg.style.color = ok ? 'var(--final)' : ''; msg.textContent = text; };
       const gbtn = document.getElementById('google-btn');
       if (gbtn) gbtn.addEventListener('click', async () => {
-        try { await gate.signInGoogle(); } catch (err) { const m = document.getElementById('signin-msg'); m.style.color = ''; m.textContent = (err && err.message) || 'Google sign-in isn’t available.'; }
+        try { await gate.signInGoogle(); } catch (err) { say((err && err.message) || 'Google sign-in isn’t available.'); }
       });
       const form = document.getElementById('signin-form');
+      const codeForm = document.getElementById('code-form');
+      let sentTo = '';
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const msg = document.getElementById('signin-msg'); const btn = document.getElementById('signin-btn');
-        btn.disabled = true; msg.style.color = ''; msg.textContent = 'Sending…';
+        const btn = document.getElementById('signin-btn');
+        btn.disabled = true; say('Sending…');
         try {
-          await gate.signIn(form.email.value.trim());
-          msg.style.color = 'var(--final)'; msg.textContent = 'Check your inbox for the sign-in link (it can take a minute). You can close this tab and open the link.';
-        } catch (err) { msg.style.color = ''; msg.textContent = (err && err.message) || 'Couldn’t send the link. Try again.'; btn.disabled = false; }
+          sentTo = form.email.value.trim().toLowerCase();
+          await gate.signIn(sentTo);
+          form.hidden = true; codeForm.hidden = false;
+          say(`We sent a 6-digit code to ${sentTo}. It can take a minute — check spam too.`, true);
+          document.getElementById('code-input').focus();
+        } catch (err) { say((err && err.message) || 'Couldn’t send the code. Try again.'); btn.disabled = false; }
       });
+      codeForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('code-btn');
+        btn.disabled = true; say('Checking…');
+        try {
+          await gate.verify(sentTo, codeForm.code.value);
+          say('Signed in — opening the app…', true);
+          history.replaceState(null, '', location.pathname); location.reload();
+        } catch (err) { say((err && err.message) || 'That code didn’t work. Check it and try again.'); btn.disabled = false; }
+      });
+      document.getElementById('code-back').addEventListener('click', () => { codeForm.hidden = true; form.hidden = false; document.getElementById('signin-btn').disabled = false; say(''); });
       return;
     }
     if (mode === 'notmember') {

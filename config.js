@@ -8,5 +8,5 @@
 window.CULT_CONFIG = {
   supabaseUrl: 'https://fbthvasbpbtpidomtdvb.supabase.co',
   supabaseAnonKey: 'sb_publishable_uMQRvidmdHfqSvadmJn6KA_eS2S60j0',
-  enableGoogle: false,    // set true after turning on the Google provider in Supabase (optional)
+  enableGoogle: true,     // the Google provider must be switched on in Supabase (Authentication -> Sign In / Providers)
 };

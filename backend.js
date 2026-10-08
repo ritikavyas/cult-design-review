@@ -233,8 +233,14 @@
           const { error } = await client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname } });
           if (error) throw error;
         },
+        // Sign-in by emailed 6-digit code (a link in an email is often "used up" by mail security scanners).
         async signIn(email) {
-          const { error } = await client.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } });
+          const { error } = await client.auth.signInWithOtp({ email, options: { shouldCreateUser: true, emailRedirectTo: location.origin + location.pathname } });
+          if (error) throw error;
+        },
+        async verify(email, code) {
+          const token = String(code || '').replace(/\s+/g, '');
+          const { error } = await client.auth.verifyOtp({ email, token, type: 'email' });
           if (error) throw error;
         },
       };
